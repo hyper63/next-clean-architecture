@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "cuid": "^2.1.8",
+    "hyper-connect": "^0.2.2",
     "next": "12.2.3",
     "ramda": "^0.28.0",
     "react": "18.2.0",

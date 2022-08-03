@@ -68,7 +68,7 @@ export const toDb: {
   as: <ds extends ZodSchema>(docSchema: ds) => (o: any) => z.infer<ds>
 } = _toDb
 
-// Crud Utilities
+// Document Crud Utilities
 
 /**
  * Given a document schema, returns a function that
