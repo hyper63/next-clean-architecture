@@ -50,7 +50,7 @@ export class Onboarding {
       addUpdatedBy(by._id),
       addType('user'),
       // Map service model to persistence model
-      create(userDocSchema.transform((data) => data))
+      create(userDocSchema)
     )(data)
 
     // create the document in hyper
@@ -60,6 +60,6 @@ export class Onboarding {
     }
 
     // Map persistence model to service model
-    return userSchema.transform((doc) => doc).parse(doc)
+    return userSchema.parse(doc)
   }
 }
