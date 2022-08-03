@@ -1,6 +1,17 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { withMiddlewareSsr } from '../lib/middleware'
+
+/**
+ * Console.log to demonstrate domain is available on getServerSideProps
+ */
+export const getServerSideProps = withMiddlewareSsr(async (context) => {
+  console.log(context.req.domain)
+  console.log(context.req.config)
+
+  return { props: {} }
+})
 
 const Home: NextPage = () => {
   return (
