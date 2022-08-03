@@ -1,34 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# NextJS Clean Architecture
+
+This is a [Next.js](https://nextjs.org/) project bootstrapped with
+[`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+This stack employs the tenants of Clean Architecture, using
+[`hyper`](https://hyper.io) as general purpose services tier
 
 ## Getting Started
 
-First, run the development server:
+> If you're using Gitpod, all of this is done for you
 
-```bash
-npm run dev
-# or
+Run `yarn` to install dependencies
+
+You'll need to create a `.env` file. You can generate one with default values by
+running `node env.cjs`.
+
+```text
+HYPER=...
+```
+
+Then:
+
+```
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will start:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+- [NextJS](https://nextjs.org/) on
+  [http://localhost:3000](http://localhost:3000)
+- **If** `process.env.HYPER` points to `localhost`, then
+  [`hyper-nano`](https://blog.hyper.io/introducing-hyper-nano-hyper-cloud-in-a-bottle/)
+  will be downloaded, started on port `6363`, and a `data` and `cache` service bootstrapped
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Relevant Code
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Business Logic and Entities
 
-## Learn More
+All business logic and entities can be found in [./lib/domain](./lib/domain/).
 
-To learn more about Next.js, take a look at the following resources:
+> Read more on business logic encapsulation and Clean Architecture
+> [here](https://blog.hyper.io/clean-architecture-at-hyper/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+You can access business services in an
+[API Route Handler](https://nextjs.org/docs/api-routes/introduction) by wrapping
+the handler with the [`withMiddleware`](./lib/middleware/index.ts)
+middleware. This will add the `DomainContexrt` on the `NextApiRequest` at
+`req.domain`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+You can access business services in
+[`getServerSideProps`](https://nextjs.org/docs/basic-features/data-fetching/get-server-side-props)
+by wrapping the function with the
+[`withMiddlewareSsr`](./lib/middleware/index.ts) middleware. This will add
+the `DomainContexrt` on the `GetServerSidePropsContext` at
+`context.req.domain`.
