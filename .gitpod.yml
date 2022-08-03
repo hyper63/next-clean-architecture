@@ -1,0 +1,13 @@
+tasks:
+  - name: deps
+    init: yarn
+
+  - name: Start
+    init: node env.cjs
+    command: |
+      yarn dev
+
+ports:
+  - port: 3000
+    visibility: public
+    onOpen: ignore
