@@ -1,13 +1,16 @@
 tasks:
   - name: deps
-    init: yarn
+    init: yarn && gp sync-done deps
 
   - name: Start
-    init: node env.cjs
+    init: gp sync-await deps && node env.cjs
     command: |
       yarn dev
 
 ports:
   - port: 3000
+    visibility: public
+    onOpen: ignore
+  - port: 6363
     visibility: public
     onOpen: ignore
