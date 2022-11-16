@@ -8,11 +8,9 @@ import type {
 
 import { config, EnvironmentConfig } from '../config'
 
-import { createApis } from '../domain/apis'
-import { createClients } from '../domain/effects/clients'
-import { domainConfig } from '../domain/config'
-import { createDataloaders } from '../domain/effects/dataloaders'
 import type { DomainContext } from '../domain/types'
+import { domainConfig } from '../domain/config'
+import { createApis } from '../domain/apis'
 import { createEffects } from '../domain/effects/effects'
 
 /**

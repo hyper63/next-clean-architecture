@@ -1,3 +1,4 @@
+import cuid from 'cuid'
 import { pipe } from 'ramda'
 import z from 'zod'
 
@@ -35,9 +36,9 @@ export const userSchema = userDocSchema
 export type User = z.infer<typeof userSchema>
 
 export const actorSchema = z.object({
-  _id: idSchema,
+  _id: idSchema.optional(),
   // Derived from claims on access token passed to route, extracted by route handling ie. middleware
-  isAdmin: z.boolean().default(false)
+  isAdmin: z.boolean().optional().default(false)
 })
 export type Actor = z.infer<typeof actorSchema>
 
@@ -51,14 +52,16 @@ export const create = (input: z.infer<typeof createSchema>) => {
 
   if (exists) throw new UserAlreadyExistsError(`user with email ${data.email} already exists`)
 
+  const _id = cuid()
+
   // use our domain models to parse a document
   const doc = pipe(
-    addCreatedBy(by._id),
-    addUpdatedBy(by._id),
+    addCreatedBy(by._id || _id),
+    addUpdatedBy(by._id || _id),
     addType('user'),
     // Map service model to persistence model
     docCreate(userDocSchema)
-  )(data)
+  )({ ...data, _id })
 
   return doc
 }
