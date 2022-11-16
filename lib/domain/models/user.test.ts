@@ -24,6 +24,23 @@ describe('user', () => {
       })
     })
 
+    test('it should set by to be self-referential', () => {
+      const data = { email: 'foo@bar.com' }
+      const res = create({
+        data,
+        exists: false,
+        by: { isAdmin: false }
+      })
+
+      expect(() => userDocSchema.parse(res)).not.toThrow()
+      expect(res).toMatchObject({
+        email: data.email,
+        createdBy: res._id,
+        updatedBy: res._id,
+        type: 'user'
+      })
+    })
+
     test('it should throw if the user already exists', () => {
       expect(() =>
         create({
