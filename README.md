@@ -5,6 +5,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with
 
 This stack employs the tenants of Clean Architecture, using
 [`hyper`](https://hyper.io) as general purpose services tier
+and [`graphql`](https://graphql.org/) to expose a presentation model.
 
 ## Getting Started
 
@@ -29,9 +30,14 @@ This will start:
 
 - [NextJS](https://nextjs.org/) on
   [http://localhost:3000](http://localhost:3000)
-- **If** `process.env.HYPER` points to `localhost`, then
-  [`hyper-nano`](https://blog.hyper.io/introducing-hyper-nano-hyper-cloud-in-a-bottle/)
+- [`hyper-nano`](https://blog.hyper.io/introducing-hyper-nano-hyper-cloud-in-a-bottle/)
   will be downloaded, started on port `6363`, and a `data` and `cache` service bootstrapped
+
+There is a `graphql` at `/api/graphql` equipped with the [`GraphiQL Playground`](https://github.com/graphql/graphiql)
+
+There is also a serveless function endpoint at `/api/hello`
+
+These both demonstrate how dependencies may be injected, so that even endpoints and graphql resolvers can be easily unit tested.
 
 ## Relevant Code
 
