@@ -2,6 +2,7 @@ import { compose } from 'ramda'
 import { GetServerSideProps, NextApiHandler } from 'next'
 
 import { withDomain, withDomainSsr } from './withDomain'
+import { withCors } from './withCors'
 
 export function withMiddleware(handler: NextApiHandler): NextApiHandler {
   return compose(withDomain)(handler)
@@ -11,4 +12,4 @@ export function withMiddlewareSsr(handler: GetServerSideProps): GetServerSidePro
   return compose(withDomainSsr)(handler)
 }
 
-export { withDomain, withDomainSsr }
+export { withDomain, withDomainSsr, withCors }

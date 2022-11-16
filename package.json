@@ -16,8 +16,12 @@
     "test:ci": "vitest --coverage"
   },
   "dependencies": {
+    "@graphql-tools/schema": "^9.0.10",
     "cuid": "^2.1.8",
     "dataloader": "^2.1.0",
+    "graphql": "^16.6.0",
+    "graphql-helix": "^1.13.0",
+    "graphql-tag": "^2.12.6",
     "hyper-connect": "^0.5.2",
     "next": "13.0.3",
     "ramda": "^0.28.0",
