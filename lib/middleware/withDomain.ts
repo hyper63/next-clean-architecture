@@ -9,10 +9,11 @@ import type {
 import { config, EnvironmentConfig } from '../config'
 
 import { createApis } from '../domain/apis'
-import { createClients } from '../domain/clients'
+import { createClients } from '../domain/effects/clients'
 import { domainConfig } from '../domain/config'
-import { createDataloaders } from '../domain/dataloaders'
+import { createDataloaders } from '../domain/effects/dataloaders'
 import type { DomainContext } from '../domain/types'
+import { createEffects } from '../domain/effects/effects'
 
 /**
  * This is the dirty component, that bootstraps
@@ -26,23 +27,14 @@ import type { DomainContext } from '../domain/types'
  * component to be unit tested independently, regardless of framework
  */
 function bootstrap(config: EnvironmentConfig): DomainContext {
-  /**
-   * Bootstrap side-effects. They also use dependency injection,
-   * so also can be unit tested easily, but contract tests are more important here,
-   * as all of the business logic belongs in business apis.
-   */
-  const sideEffects: any = {}
-  sideEffects.clients = createClients({ hyper: config.hyper })
-  // dataloaders may reference to each other and clients, but not apis
-  sideEffects.dataloaders = createDataloaders(sideEffects)
+  const effects = createEffects(config)
 
   /**
    * Now side-effects are bootstrapped. Now inject side effects into business logic
    */
-
-  const domain = { ...sideEffects }
+  const domain: any = { ...effects }
   // Pull values off of environment config to produce the configuration for the domain
-  domain.config = domainConfig.parse({})
+  domain.config = domainConfig.parse(config)
   // apis may reference each other, domain config, dataloaders, and clients
   domain.apis = createApis(domain)
   return domain as DomainContext
