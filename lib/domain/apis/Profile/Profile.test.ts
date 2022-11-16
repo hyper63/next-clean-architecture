@@ -2,10 +2,10 @@ import { describe, expect, test, vi } from 'vitest'
 import cuid from 'cuid'
 import { connect } from 'hyper-connect'
 
-import { GenericError, UserAlreadyExistsError } from '../../../domain/models/err'
-import { userSchema } from '../../../domain/models/user'
+import { GenericError } from '../../models/err'
+import { userSchema } from '../../models/user'
 
-import { Onboarding } from './Onboarding'
+import { Profile } from './Profile'
 
 const context = {
   clients: {
@@ -13,9 +13,9 @@ const context = {
   }
 }
 
-describe('Onboarding', () => {
+describe('Profile', () => {
   // @ts-ignore
-  const onboarding = new Onboarding(context)
+  const profile = new Profile(context)
 
   describe('onboardUser', () => {
     test('it should create the user', async () => {
@@ -29,31 +29,11 @@ describe('Onboarding', () => {
         id: 'foo'
       }))
 
-      const by = cuid()
-      const parent = cuid()
-      const newUser = { email: 'foo@foo.com', parent }
-
-      const res = await onboarding.onboardUser({ data: newUser, by: { _id: by, isAdmin: false } })
-      expect(() => userSchema.parse(res)).not.toThrow()
-      expect(res).toMatchObject({
-        email: newUser.email,
-        createdBy: by,
-        updatedBy: by
+      const res = await profile.onboardUser({
+        data: { email: 'foo@foo.com' },
+        by: { _id: cuid(), isAdmin: false }
       })
-    })
-
-    test('it should throw an error if the user already exists', async () => {
-      vi.spyOn(context.clients.hyper.data, 'query').mockImplementationOnce(async () => ({
-        ok: true,
-        docs: [{ _id: 'foo' }]
-      }))
-
-      expect(() =>
-        onboarding.onboardUser({
-          data: { email: 'foo@foo.com' },
-          by: { _id: cuid(), isAdmin: false }
-        })
-      ).rejects.toThrow(UserAlreadyExistsError)
+      expect(() => userSchema.parse(res)).not.toThrow()
     })
 
     test('it should bubble a GenericError', async () => {
@@ -65,7 +45,7 @@ describe('Onboarding', () => {
       }))
 
       expect(() =>
-        onboarding.onboardUser({
+        profile.onboardUser({
           data: { email: 'foo@foo.com' },
           by: { _id: cuid(), isAdmin: false }
         })
@@ -83,7 +63,7 @@ describe('Onboarding', () => {
       }))
 
       expect(() =>
-        onboarding.onboardUser({
+        profile.onboardUser({
           data: { email: 'foo@foo.com' },
           by: { _id: cuid(), isAdmin: false }
         })

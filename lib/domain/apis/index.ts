@@ -1,8 +1,10 @@
-import { Onboarding } from './Onboarding/Onboarding'
+import { Profile } from './Profile/Profile'
+import { User } from './User/User'
 
 /**
  * All business logic apis are instantiated here
  */
 export const createApis = (context: any) => ({
-  Onboarding: new Onboarding(context)
+  Profile: new Profile(context),
+  User: new User(context)
 })

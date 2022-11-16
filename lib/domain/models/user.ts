@@ -1,6 +1,15 @@
+import { pipe } from 'ramda'
 import z from 'zod'
 
-import { docSchema, idSchema } from './doc'
+import {
+  addCreatedBy,
+  addType,
+  addUpdatedBy,
+  docSchema,
+  idSchema,
+  create as docCreate
+} from './doc'
+import { UserAlreadyExistsError } from './err'
 
 export const userDocSchema = docSchema
   .extend({
@@ -25,12 +34,31 @@ export type UserDoc = z.infer<typeof userDocSchema>
 export const userSchema = userDocSchema
 export type User = z.infer<typeof userSchema>
 
-export const newUserSchema = userDocSchema.pick({ email: true })
-export type NewUser = z.infer<typeof newUserSchema>
-
 export const actorSchema = z.object({
   _id: idSchema,
   // Derived from claims on access token passed to route, extracted by route handling ie. middleware
   isAdmin: z.boolean().default(false)
 })
 export type Actor = z.infer<typeof actorSchema>
+
+const createSchema = z.object({
+  data: userDocSchema.pick({ email: true }),
+  exists: z.boolean(),
+  by: actorSchema
+})
+export const create = (input: z.infer<typeof createSchema>) => {
+  const { data, exists, by } = createSchema.parse(input)
+
+  if (exists) throw new UserAlreadyExistsError(`user with email ${data.email} already exists`)
+
+  // use our domain models to parse a document
+  const doc = pipe(
+    addCreatedBy(by._id),
+    addUpdatedBy(by._id),
+    addType('user'),
+    // Map service model to persistence model
+    docCreate(userDocSchema)
+  )(data)
+
+  return doc
+}

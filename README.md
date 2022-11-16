@@ -37,7 +37,11 @@ This will start:
 
 ### Business Logic and Entities
 
-All business logic and entities can be found in [./lib/domain](./lib/domain/).
+All business logic and entities can be found in [./lib/domain](./lib/domain/)
+
+In particular [./lib/domain/models](./lib/domain/models) contains all our entities and business rules. All of this logic has no dependencies other than utilities ie. `ramda`, `zod`, etc. and each other, and therefore is very easy to unit test!
+
+[./lib/domain/apis](./lib/domain/apis) weaves side effects, received via simple dependency injection, with our business rules.
 
 > Read more on business logic encapsulation and Clean Architecture
 > [here](https://blog.hyper.io/clean-architecture-at-hyper/)
