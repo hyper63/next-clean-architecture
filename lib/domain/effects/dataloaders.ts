@@ -26,16 +26,12 @@ export type DataloadersContext = {
 const findByIdDataloader = (context: DataloadersContext) =>
   new Dataloader<string, { _id: string } | undefined>(async (ids) => {
     const {
-      clients: { hyper }
+      clients: { data }
     } = context
 
     return (
-      hyper.data
-        .query<{ _id: string }>(
-          { _id: { $in: ids } },
-          // Hyper Data's default limit is 25 docs. We override that
-          { limit: Number.MAX_SAFE_INTEGER }
-        )
+      data
+        .query<{ _id: string }>({ _id: { $in: ids } }, { limit: Number.MAX_SAFE_INTEGER })
         /**
          * Order of the result array must match the input array
          *

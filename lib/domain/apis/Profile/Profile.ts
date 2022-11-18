@@ -27,22 +27,22 @@ export class Profile {
    */
   async onboardUser(input: z.infer<typeof onboardUserSchema>): Promise<User> {
     const {
-      clients: { hyper }
+      clients: { data }
     } = this.context
 
     // Parse input
-    const { data, by } = onboardUserSchema.parse(input)
+    const { data: inputData, by } = onboardUserSchema.parse(input)
 
     // Query Side Effects
-    const query = await hyper.data.query<UserDoc>({ type: typeSchema.Enum.user, email: data.email })
+    const query = await data.query<UserDoc>({ type: typeSchema.Enum.user, email: inputData.email })
     if (!query.ok) throw new GenericError(query.msg)
     const [exists] = query.docs
 
     // BL
-    const doc = createUser({ data, exists: !!exists, by })
+    const doc = createUser({ data: inputData, exists: !!exists, by })
 
     // Persistence Side Effects
-    const add = await hyper.data.add(doc)
+    const add = await data.add(doc)
     if (!add.ok) throw new GenericError(add.msg)
 
     // Map DTO

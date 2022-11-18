@@ -4,6 +4,6 @@ import { fetch } from 'undici'
 export type ClientConfig = { hyper: string }
 
 export const createClients = (config: ClientConfig) => ({
-  hyper: connect(config.hyper),
+  ...connect(config.hyper),
   fetch
 })

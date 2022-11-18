@@ -9,7 +9,7 @@ import { Profile } from './Profile'
 
 const context = {
   clients: {
-    hyper: connect('http://mock.hyper.io/test')
+    ...connect('http://mock.hyper.io/test')
   }
 }
 
@@ -19,12 +19,12 @@ describe('Profile', () => {
 
   describe('onboardUser', () => {
     test('it should create the user', async () => {
-      vi.spyOn(context.clients.hyper.data, 'query').mockImplementationOnce(async () => ({
+      vi.spyOn(context.clients.data, 'query').mockImplementationOnce(async () => ({
         ok: true,
         docs: []
       }))
 
-      vi.spyOn(context.clients.hyper.data, 'add').mockImplementationOnce(async () => ({
+      vi.spyOn(context.clients.data, 'add').mockImplementationOnce(async () => ({
         ok: true,
         id: 'foo'
       }))
@@ -38,7 +38,7 @@ describe('Profile', () => {
 
     test('it should bubble a GenericError', async () => {
       // error on query check
-      vi.spyOn(context.clients.hyper.data, 'query').mockImplementationOnce(async () => ({
+      vi.spyOn(context.clients.data, 'query').mockImplementationOnce(async () => ({
         ok: false as const,
         msg: 'woops',
         status: 400
@@ -51,13 +51,13 @@ describe('Profile', () => {
         })
       ).rejects.toThrow(GenericError)
 
-      vi.spyOn(context.clients.hyper.data, 'query').mockImplementationOnce(async () => ({
+      vi.spyOn(context.clients.data, 'query').mockImplementationOnce(async () => ({
         ok: true,
         docs: []
       }))
 
       // error on document add
-      vi.spyOn(context.clients.hyper.data, 'add').mockImplementationOnce(async () => ({
+      vi.spyOn(context.clients.data, 'add').mockImplementationOnce(async () => ({
         ok: false as const,
         msg: 'oops'
       }))
