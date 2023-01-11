@@ -7,6 +7,14 @@ This stack employs the tenants of Clean Architecture, using
 [`hyper`](https://hyper.io) as general purpose services tier
 and [`graphql`](https://graphql.org/) to expose a presentation model.
 
+<!-- toc -->
+
+- [Getting Started](#getting-started)
+- [Relevant Code](#relevant-code)
+  - [Business Logic and Entities](#business-logic-and-entities)
+
+<!-- tocstop -->
+
 ## Getting Started
 
 > If you're using Gitpod, all of this is done for you

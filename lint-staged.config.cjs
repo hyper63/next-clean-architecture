@@ -1,3 +1,7 @@
 module.exports = {
-  '**/*.{ts,tsx,js,jsx,md,json,yml}': 'prettier --write'
+  '**/*.{ts,tsx,js,jsx,json,yml}': 'prettier --write',
+  '.md': [
+    'markdown-toc-gen insert',
+    'prettier --write'
+  ]
 }
