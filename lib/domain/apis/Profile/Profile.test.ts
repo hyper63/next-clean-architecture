@@ -18,6 +18,12 @@ describe('Profile', () => {
   const profile = new Profile(context)
 
   describe('onboardUser', () => {
+    const data = {
+      email: 'foo@bar.com',
+      avatarUrl: 'https://fake.url',
+      favoriteColor: 'red' as const
+    }
+
     test('it should create the user', async () => {
       vi.spyOn(context.clients.data, 'query').mockImplementationOnce(async () => ({
         ok: true,
@@ -30,7 +36,7 @@ describe('Profile', () => {
       }))
 
       const res = await profile.onboardUser({
-        data: { email: 'foo@foo.com' },
+        data,
         by: { _id: cuid(), isAdmin: false }
       })
       expect(() => userSchema.parse(res)).not.toThrow()
@@ -46,7 +52,7 @@ describe('Profile', () => {
 
       expect(() =>
         profile.onboardUser({
-          data: { email: 'foo@foo.com' },
+          data,
           by: { _id: cuid(), isAdmin: false }
         })
       ).rejects.toThrow(GenericError)
@@ -64,7 +70,7 @@ describe('Profile', () => {
 
       expect(() =>
         profile.onboardUser({
-          data: { email: 'foo@foo.com' },
+          data,
           by: { _id: cuid(), isAdmin: false }
         })
       ).rejects.toThrow(GenericError)

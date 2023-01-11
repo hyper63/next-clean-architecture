@@ -1,5 +1,6 @@
 import { gql } from 'graphql-tag'
 
+import { Color } from '../domain/models/color'
 import { extractTypedError, ResolverContext, typedErrorResolver } from './resolvers'
 
 export const typeDefs = gql`
@@ -12,6 +13,9 @@ export const typeDefs = gql`
 
   input CreateUserInput {
     email: String!
+    name: String
+    avatarUrl: String!
+    favoriteColor: Color!
   }
 
   type CreateUserResult {
@@ -37,7 +41,9 @@ export const resolvers = {
   Mutation: {
     createUser: async (
       _: undefined,
-      { input }: { input: { email: string } },
+      {
+        input
+      }: { input: { email: string; name?: string; avatarUrl: string; favoriteColor: Color } },
       {
         domain: {
           apis: { Profile }
@@ -45,7 +51,7 @@ export const resolvers = {
       }: ResolverContext
     ) => {
       return Profile.onboardUser({
-        data: { email: input.email },
+        data: input,
         /**
          * This would actually be derived from some sort of session,
          * also passes via graphql context

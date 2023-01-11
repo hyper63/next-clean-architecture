@@ -6,7 +6,7 @@ import { actorSchema, create as createUser, User, UserDoc, userSchema } from '..
 import { DomainContext } from '../../types'
 
 const onboardUserSchema = z.object({
-  data: z.object({ email: z.string().email() }),
+  data: userSchema.pick({ email: true, name: true, avatarUrl: true, favoriteColor: true }),
   by: actorSchema
 })
 

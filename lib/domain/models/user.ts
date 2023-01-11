@@ -12,9 +12,15 @@ import {
 } from './doc'
 import { UserAlreadyExistsError } from './err'
 
+export const colorSchema = z.enum(['red', 'blue', 'yellow'])
+export type Color = z.infer<typeof colorSchema>
+
 export const userDocSchema = docSchema
   .extend({
     email: z.string().email(),
+    name: z.string().optional(),
+    avatarUrl: z.string().url(),
+    favoriteColor: colorSchema,
     /**
      * The user that created this user.
      * Could be reflexive, in that a user may create themself
@@ -43,7 +49,7 @@ export const actorSchema = z.object({
 export type Actor = z.infer<typeof actorSchema>
 
 const createSchema = z.object({
-  data: userDocSchema.pick({ email: true }),
+  data: userDocSchema.pick({ email: true, name: true, avatarUrl: true, favoriteColor: true }),
   exists: z.boolean(),
   by: actorSchema
 })

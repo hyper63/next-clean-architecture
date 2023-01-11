@@ -6,9 +6,14 @@ import { UserAlreadyExistsError } from './err'
 
 describe('user', () => {
   describe('create', () => {
+    const data = {
+      email: 'foo@bar.com',
+      avatarUrl: 'https://fake.url',
+      favoriteColor: 'red' as const
+    }
+
     test('it should create the user', () => {
       const by = cuid()
-      const data = { email: 'foo@bar.com' }
       const res = create({
         data,
         exists: false,
@@ -25,7 +30,6 @@ describe('user', () => {
     })
 
     test('it should set by to be self-referential', () => {
-      const data = { email: 'foo@bar.com' }
       const res = create({
         data,
         exists: false,
@@ -41,10 +45,21 @@ describe('user', () => {
       })
     })
 
+    test('it should throw if missing required fields', () => {
+      expect(() =>
+        create({
+          // @ts-ignore
+          data: { email: 'foo@bar.com' },
+          exists: false,
+          by: { _id: cuid(), isAdmin: false }
+        })
+      ).toThrow()
+    })
+
     test('it should throw if the user already exists', () => {
       expect(() =>
         create({
-          data: { email: 'foo@bar.com' },
+          data,
           exists: true,
           by: { _id: cuid(), isAdmin: false }
         })
