@@ -7,6 +7,11 @@ export const typeDefs = gql`
     Retrieve a user by their \`ID\`
     """
     user(id: ID!): User
+
+    """
+    Retrieve the \`ColorTally\` for the given \`Color\`
+    """
+    colorTally(color: Color!): ColorTally!
   }
 `
 
@@ -23,6 +28,7 @@ export const resolvers = {
     ) => {
       const user = await User.findById(id)
       return user
-    }
+    },
+    colorTally: (_: undefined, { color }: { color: string }) => ({ color })
   }
 }

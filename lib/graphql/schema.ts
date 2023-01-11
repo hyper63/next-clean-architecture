@@ -3,12 +3,13 @@ import { gql } from 'graphql-tag'
 
 // Types
 import * as User from './user.schema'
+import * as Color from './color.schema'
 import * as Error from './error.schema'
 // Entrypoints
 import * as Query from './query.schema'
 import * as Mutation from './mutation.schema'
 
-const minis = [User, Error, Query, Mutation]
+const minis = [User, Color, Error, Query, Mutation]
 
 /**
  * Combine all the little schemas into the full schema

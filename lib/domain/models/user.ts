@@ -2,6 +2,8 @@ import cuid from 'cuid'
 import { pipe } from 'ramda'
 import z from 'zod'
 
+import { colorSchema } from './color'
+
 import {
   addCreatedBy,
   addType,
@@ -11,9 +13,6 @@ import {
   create as docCreate
 } from './doc'
 import { UserAlreadyExistsError } from './err'
-
-export const colorSchema = z.enum(['red', 'blue', 'yellow'])
-export type Color = z.infer<typeof colorSchema>
 
 export const userDocSchema = docSchema
   .extend({

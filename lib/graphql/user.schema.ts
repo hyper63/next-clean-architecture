@@ -1,13 +1,8 @@
 import { gql } from 'graphql-tag'
 
-import { colorSchema } from '../domain/models/user'
 import type { Parent, ResolverContext } from './resolvers'
 
 export const typeDefs = gql`
-  enum Color {
-    ${Object.values(colorSchema.Enum)}
-  }
-
   type User {
     """
     The unique identifier of the \`User\`
@@ -109,6 +104,5 @@ export const resolvers = {
       // Our resolvers will do the lifting for us
       return { _id: user.createdBy }
     }
-  },
-  Color: colorSchema.Enum
+  }
 }

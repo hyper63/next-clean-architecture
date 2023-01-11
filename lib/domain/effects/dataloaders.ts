@@ -1,5 +1,5 @@
 import Dataloader from 'dataloader'
-import { always, find, propEq } from 'ramda'
+import { always, filter, find, propEq } from 'ramda'
 
 import { createClients } from './clients'
 
@@ -44,6 +44,31 @@ const findByIdDataloader = (context: DataloadersContext) =>
     )
   })
 
+const findByFavoriteColorDataloader = (context: DataloadersContext) =>
+  new Dataloader<string, { _id: string; favoriteColor: string }[]>(async (colors) => {
+    const {
+      clients: { data }
+    } = context
+
+    return (
+      data
+        .query<{ _id: string; favoriteColor: string }>(
+          { favoriteColor: { $in: colors } },
+          { limit: Number.MAX_SAFE_INTEGER }
+        )
+        /**
+         * Order of the result array must match the input array
+         *
+         * Read More: https://github.com/graphql/dataloader#batch-function
+         */
+        .then((res) => {
+          if (!res.ok) return colors.map(always(new Error(res.msg)))
+          return colors.map((color) => filter(propEq('favoriteColor', color), res.docs))
+        })
+    )
+  })
+
 export const createDataloaders = (context: any) => ({
-  findByIdDataloader: findByIdDataloader(context)
+  findByIdDataloader: findByIdDataloader(context),
+  findByFavoriteColorDataloader: findByFavoriteColorDataloader(context)
 })
