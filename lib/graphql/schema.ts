@@ -1,3 +1,6 @@
+import { identity, pipe } from 'ramda'
+import type { DocumentNode, GraphQLSchema } from 'graphql'
+import type { IResolvers } from '@graphql-tools/utils'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { gql } from 'graphql-tag'
 
@@ -9,14 +12,26 @@ import * as Error from './error.schema'
 import * as Query from './query.schema'
 import * as Mutation from './mutation.schema'
 
-const minis = [User, Color, Error, Query, Mutation]
+const minis: {
+  typeDefs: DocumentNode
+  resolvers: IResolvers
+  transformer?: (schema: GraphQLSchema) => GraphQLSchema
+}[] = [User, Color, Error, Query, Mutation]
+
+const typeDefs = minis.map((m) => m.typeDefs || gql``)
+const resolvers = minis.map((m) => m.resolvers || {})
+const transformers = minis
+  .map(({ transformer = identity<GraphQLSchema> }) => transformer)
+  .reduce(pipe, identity<GraphQLSchema>)
 
 /**
- * Combine all the little schemas into the full schema
- *
- * you may also want to supply transforms or directives here
+ * Combine all the little schemas into the full schema,
+ * wrapping with transformers ie. directives
  */
-export const schema = makeExecutableSchema({
-  typeDefs: minis.map((m) => m.typeDefs || gql``),
-  resolvers: minis.map((m) => m.resolvers || {})
-})
+export const schema = transformers(
+  makeExecutableSchema({
+    typeDefs,
+    resolvers,
+    inheritResolversFromInterfaces: true
+  })
+)
