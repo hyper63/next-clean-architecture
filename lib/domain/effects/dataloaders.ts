@@ -1,5 +1,5 @@
 import Dataloader from 'dataloader'
-import { always, filter, find, propEq } from 'ramda'
+import { always, filter, find, head, propEq, tail } from 'ramda'
 
 import { createClients } from './clients'
 
@@ -31,7 +31,7 @@ const findByIdDataloader = (context: DataloadersContext) =>
 
     return (
       data
-        .query<{ _id: string }>({ _id: { $in: ids } }, { limit: Number.MAX_SAFE_INTEGER })
+        .list<{ _id: string }>({ keys: [...ids], limit: ids.length })
         /**
          * Order of the result array must match the input array
          *
@@ -50,10 +50,21 @@ const findByFavoriteColorDataloader = (context: DataloadersContext) =>
       clients: { data }
     } = context
 
+    const range = [...colors].sort()
+
     return (
       data
         .query<{ _id: string; favoriteColor: string }>(
-          { favoriteColor: { $in: colors } },
+          {
+            favoriteColor: {
+              /**
+               * Range operators are much more performant than
+               * disjunction operators like $or, $in, or $ne
+               */
+              $gte: head(range),
+              $lte: tail(range)
+            }
+          },
           { limit: Number.MAX_SAFE_INTEGER }
         )
         /**
