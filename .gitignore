@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+.yarn/install-state.gz
 
 # testing
 /coverage
@@ -37,3 +38,7 @@ yarn-error.log*
 # hyper
 __hyper__
 hyper-nano
+
+.next
+coverage
+.env.*

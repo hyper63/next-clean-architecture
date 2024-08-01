@@ -1,9 +1,11 @@
+image: .gitpod.Dockerfile
+
 tasks:
   - name: deps
     init: yarn && gp sync-done deps
 
   - name: Start
-    init: gp sync-await deps && node env.cjs
+    init: gp sync-await deps && node env.js
     command: |
       yarn dev
 

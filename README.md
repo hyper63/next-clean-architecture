@@ -27,6 +27,11 @@ and [`graphql`](https://graphql.org/) to expose a presentation model.
 
 > If you're using Gitpod, all of this is done for you
 
+You will need to enable [corepack](https://nodejs.org/api/corepack.html) by running `corepack enable`,
+so that `yarn berry` can be used. Then run `yarn set version berry`.
+
+> `yarn berry` supports using `node_modules`, and is completely backwards compatible with `yarn 1.x`
+
 Run `yarn` to install dependencies
 
 You'll need to create a `.env` file. You can generate one with default values by

@@ -1,6 +1,6 @@
-const { readFile, writeFile } = require('fs/promises')
+import { readFile, writeFile } from 'node:fs/promises'
 
-const _p = require('./package.json')
+const _p = await readFile('./package.json').then(JSON.parse)
 
 async function init() {
   const env = await readFile('./.env.example', 'utf-8')

@@ -1,4 +1,4 @@
-import { identity, pipe } from 'ramda'
+import { identity } from 'ramda'
 import type { DocumentNode, GraphQLSchema } from 'graphql'
 import type { IResolvers } from '@graphql-tools/utils'
 import { makeExecutableSchema } from '@graphql-tools/schema'
@@ -22,7 +22,7 @@ const typeDefs = minis.map((m) => m.typeDefs || gql``)
 const resolvers = minis.map((m) => m.resolvers || {})
 const transformers = minis
   .map(({ transformer = identity<GraphQLSchema> }) => transformer)
-  .reduce(pipe, identity<GraphQLSchema>)
+  .reduce((cur, next) => (schema: GraphQLSchema) => next(cur(schema)), identity<GraphQLSchema>)
 
 /**
  * Combine all the little schemas into the full schema,

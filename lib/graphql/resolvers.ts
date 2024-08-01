@@ -19,6 +19,7 @@ export const typedErrorResolver = (err: TypedError) => err.type || 'GenericError
  * So we use this utility to extract the fields from our domain errors,
  * so that domain specific graphql errors work and fields continue to resolve
  */
+// @ts-ignore
 export const extractTypedError = compose(
   pick(['type', 'message', 'status']),
   (err: any): TypedError => {

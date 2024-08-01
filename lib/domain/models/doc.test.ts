@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import cuid from 'cuid'
 import z from 'zod'
 
-import { create, docSchema, update } from './doc'
+import { create, docSchema, get, update } from './doc'
 
 describe('model', () => {
   describe('docSchema', () => {
@@ -50,9 +50,33 @@ describe('model', () => {
         fizz: 'fuzz'
       }
 
-      // @ts-ignore
+      // @ts-expect-error
       expect(schema.parse(valid).foo).toBeFalsy()
       expect(schema.parse(valid).fizz).toBeTruthy()
+    })
+  })
+
+  describe('get', () => {
+    test('should parse the doc', () => {
+      const valid = {
+        _id: cuid(),
+        type: 'user',
+        parent: cuid(),
+        createdBy: cuid(),
+        updatedBy: cuid()
+      }
+
+      expect(get(docSchema)(create(docSchema)(valid))).toBeTypeOf('object')
+
+      const invalid = {
+        _id: cuid(),
+        no_type: 'user',
+        parent: cuid(),
+        createdBy: cuid(),
+        updatedBy: cuid()
+      }
+
+      expect(() => get(docSchema)(invalid)).toThrow()
     })
   })
 
@@ -80,13 +104,23 @@ describe('model', () => {
     test('should parse the doc', () => {
       const valid = {
         _id: cuid(),
+        type: 'user',
+        parent: cuid(),
+        createdBy: cuid(),
+        updatedBy: cuid()
+      }
+
+      expect(create(docSchema)(valid)).toBeTypeOf('object')
+
+      const invalid = {
+        _id: cuid(),
         no_type: 'user',
         parent: cuid(),
         createdBy: cuid(),
         updatedBy: cuid()
       }
 
-      expect(() => create(docSchema)(valid)).toThrow()
+      expect(() => create(docSchema)(invalid)).toThrow()
     })
 
     test('should set _id if not already set', () => {

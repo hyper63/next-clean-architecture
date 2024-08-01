@@ -58,7 +58,7 @@ export const fromDb: {
 const _toDb: any = compose(
   // ensure all required fields are present
   (model) => docSchema.parse(model),
-  assoc('updatedAt', new Date())
+  (model) => assoc('updatedAt', new Date(), model)
 )
 // take an additional schema and further parse the document
 _toDb.as = <ds extends ZodSchema>(ds: ds) => compose((doc) => ds.parse(doc), _toDb)

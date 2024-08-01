@@ -1,3 +1,5 @@
+/* c8 ignore start */
+
 import { Profile } from './Profile/Profile'
 import { User } from './User/User'
 

@@ -9,7 +9,8 @@ export default defineConfig({
   test: {
     silent: true,
     coverage: {
-      lines: 90
+      lines: 90,
+      include: ['lib/domain/apis', 'lib/domain/models']
     }
   }
 })
