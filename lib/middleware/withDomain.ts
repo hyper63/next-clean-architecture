@@ -42,6 +42,10 @@ export function withDomain(handler: NextApiHandler): NextApiHandler {
   return (req: NextApiRequest, res: NextApiResponse) => {
     req.config = config
     req.domain = bootstrap(config)
+    /**
+     * Convenience logger at top of req
+     */
+    req.logger = req.domain.clients.logger
     return handler(req, res)
   }
 }
@@ -50,6 +54,11 @@ export function withDomainSsr(handler: GetServerSideProps) {
   return (context: GetServerSidePropsContext) => {
     context.req.config = config
     context.req.domain = bootstrap(config)
+    /**
+     * Convenience logger at top of req
+     */
+    context.req.logger = context.req.domain.clients.logger;
+    
     return handler(context)
   }
 }
@@ -65,6 +74,7 @@ export function withDomainSsr(handler: GetServerSideProps) {
 declare module 'http' {
   interface IncomingMessage {
     config: EnvironmentConfig
-    domain: DomainContext
+    domain: DomainContext,
+    logger: DomainContext['clients']['logger']
   }
 }

@@ -7,8 +7,9 @@ import { withMiddlewareSsr } from '../lib/middleware'
  * Console.log to demonstrate domain is available on getServerSideProps
  */
 export const getServerSideProps = withMiddlewareSsr(async (context) => {
-  console.log(context.req.domain)
-  console.log(context.req.config)
+  const { req: { domain, config }} = context
+  console.log(domain)
+  console.log(config)
 
   return { props: {} }
 })

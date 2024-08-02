@@ -1,22 +1,14 @@
 import { mergeDeepRight } from 'ramda'
 import z from 'zod'
 
+import { loggingFormatSchema, loggingLevelSchema } from './logger'
+
 const environmentName = z.enum(['development', 'test', 'staging', 'production'])
 export const EnvironmentName = environmentName.Enum
 
 export const MODE = process.env['NODE_ENV'] as z.infer<typeof environmentName>
 
-if (!MODE) {
-  throw new Error('NODE_ENV must be defined')
-}
-
-const loggingFormatSchema = z.enum(['pretty', 'pretty_json', 'json'])
-// convenience object for referencing valid logging format values
-export const LoggingFormat = loggingFormatSchema.Enum
-
-const loggingLevelSchema = z.enum(['off', 'error', 'warn', 'info', 'verbose', 'debug', 'silly'])
-// convenience object for referencing valid logging level values
-export const LoggingLevel = loggingLevelSchema.Enum
+if (!MODE) throw new Error('NODE_ENV must be defined')
 
 /**
  * We extend the domainConfig, so this will contain
@@ -40,8 +32,8 @@ const commonConfig = environmentConfig.deepPartial().parse({
   mode: MODE,
   isDevMode: MODE === 'development',
   logging: {
-    level: process.env['LOG_LEVEL'] || LoggingLevel.debug,
-    format: process.env['LOG_FORMAT'] || LoggingFormat.json
+    level: process.env['LOG_LEVEL'] || loggingLevelSchema.Enum.debug,
+    format: process.env['LOG_FORMAT'] || loggingFormatSchema.Enum.json
   },
   hyper: process.env['HYPER'],
   /**
@@ -53,13 +45,13 @@ const commonConfig = environmentConfig.deepPartial().parse({
 const allConfig = {
   development: partialEnvironmentConfig.parse({
     logging: {
-      level: LoggingLevel.debug,
-      format: LoggingFormat.pretty_json
+      level: loggingLevelSchema.Enum.debug,
+      format: loggingFormatSchema.Enum.pretty
     }
   }),
   test: partialEnvironmentConfig.parse({
     logging: {
-      level: LoggingLevel.off
+      level: loggingLevelSchema.Enum.off
     }
   }),
   staging: {},
