@@ -79,6 +79,10 @@ const findByFavoriteColorDataloader = (context: DataloadersContext) =>
     )
   })
 
+/**
+ * Despite not being part of the domain, dataloaders builder is kept here
+ * for the sake of convenience and simpler types (see DomainContext)
+ */
 export const createDataloaders = (context: any) => ({
   findByIdDataloader: findByIdDataloader(context),
   findByFavoriteColorDataloader: findByFavoriteColorDataloader(context)

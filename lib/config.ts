@@ -1,28 +1,26 @@
 import { mergeDeepRight } from 'ramda'
 import z from 'zod'
 
-import { loggingFormatSchema, loggingLevelSchema } from './logger'
-
-const environmentName = z.enum(['development', 'test', 'staging', 'production'])
-export const EnvironmentName = environmentName.Enum
+import { environmentName, loggingLevelSchema } from './domain/config'
+import { clientConfig } from './domain/effects/clients'
 
 export const MODE = process.env['NODE_ENV'] as z.infer<typeof environmentName>
 
 if (!MODE) throw new Error('NODE_ENV must be defined')
 
 /**
- * We extend the domainConfig, so this will contain
- * all configuration for our presentation and our domain
+ * We extend the clientConfig, so that this configuration
+ * requires all configuration for:
+ * 
+ * - Our presentation layer (driving side-effect)
+ * - Our client implementations (driven side-effects)
+ * - Our business domain
+ * 
+ * Since this parses configuration as startup time, our application
+ * will fail fast, if some required configuration is not provided,
+ * which is what we want
  */
-const environmentConfig = z.object({
-  hyper: z.string().min(1),
-  version: z.string(),
-  mode: environmentName,
-  isDevMode: z.boolean(),
-  logging: z.object({
-    level: loggingLevelSchema,
-    format: loggingFormatSchema
-  }),
+const environmentConfig = clientConfig.extend({
   playground: z.boolean()
 })
 const partialEnvironmentConfig = environmentConfig.deepPartial()
@@ -32,8 +30,7 @@ const commonConfig = environmentConfig.deepPartial().parse({
   mode: MODE,
   isDevMode: MODE === 'development',
   logging: {
-    level: process.env['LOG_LEVEL'] || loggingLevelSchema.Enum.debug,
-    format: process.env['LOG_FORMAT'] || loggingFormatSchema.Enum.json
+    level: process.env['LOG_LEVEL'] || loggingLevelSchema.Enum.debug
   },
   hyper: process.env['HYPER'],
   /**
@@ -45,8 +42,7 @@ const commonConfig = environmentConfig.deepPartial().parse({
 const allConfig = {
   development: partialEnvironmentConfig.parse({
     logging: {
-      level: loggingLevelSchema.Enum.debug,
-      format: loggingFormatSchema.Enum.pretty
+      level: loggingLevelSchema.Enum.debug
     }
   }),
   test: partialEnvironmentConfig.parse({
@@ -54,7 +50,7 @@ const allConfig = {
       level: loggingLevelSchema.Enum.off
     }
   }),
-  staging: {},
+  preview: {},
   production: partialEnvironmentConfig.parse({
     playground: false
   })
