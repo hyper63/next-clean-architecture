@@ -10,7 +10,7 @@ import { config, EnvironmentConfig } from '../config'
 
 import type { DomainContext } from '../domain/types'
 import { domainConfig } from '../domain/config'
-import { createApis } from '../domain/apis'
+import { createApis } from '../domain/apis/apis'
 import { createEffects } from '../domain/effects/effects'
 
 /**
