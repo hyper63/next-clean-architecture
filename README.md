@@ -20,6 +20,7 @@ and [`graphql`](https://graphql.org/) to expose a presentation model.
 - [Testing](#testing)
   - [Unit Tests](#unit-tests)
   - [Contract Tests](#contract-tests)
+- [Domains](#domains)
 
 <!-- tocstop -->
 
@@ -98,9 +99,9 @@ The way data flows through this application is very purposefully consistent, as 
 Data in the backend typically flows through these layers:
 
 ```text
-GraphQL -> Business API -> dataloader|client
+GraphQL -> Business API -> dataloader|client (effects)
 # OR
-REST -> Business API -> dataloader|client
+REST -> Business API -> dataloader|client (effects)
 ```
 
 Data flows into the backend either via REST endpoints, or GraphQL. Almost all communication from the frontend ought to be done via GraphQL, but REST can also be used. For example, file upload is notoriously "weird" using GraphQL, so using a regular HTTP endpoint, that still calls into business services, may be preferred.
@@ -187,3 +188,30 @@ dep.fooApi(veryImportantContract.parse(input)) // contract will throw and the de
 ```
 
 This contract is excercised every time your dependency is consumed, at _runtime_. This also ensures your mock that you use in your [Unit Tests](#unit-tests) stay up to date, as it is also exercised by the Contract.
+
+## Domains
+
+This project is structured as a
+["Modular Monolith"](https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity).
+This means that despite only having a single deployable unit, disaperate business logic is encapsulated within separate "bounded-contexts" or "domains". When one bounded context wishes to communicate to another bounded context, it is done so via an API call.
+
+> In a microservice architecture, each domain may expose an api as a service to be consumed via a network
+> call. In a modular monolith, that API is a function, running on the same process. One deployable
+> -- many domains.
+
+Ultimately, the goal of Modular Monolith is to provide a "sandbox" for engineering to hone in on
+what the domains in the system actually _are_ and to refine the contextual boundaries between them,
+over time, **without** having to pay the heavy costs of getting it wrong, like you would have to in a
+microservice architecture ie. lock-step release cycles, api versioning, etc. With a Modular
+Monolith, if a context boundary needs to be changed, then its just a matter of rearranging code
+behind the logical boundaries, which is then all deployed as a single unit.
+
+> The ultimate goal is establish domain boundaries that enable loose coupling between each of the domains, such that one domain can change and deploy independent of the others, as long as its api has not changed.
+
+At a certain point, when it becomes necessary to break out separate deployable units ie.
+microservices, for the purposes of scalability, team independence, etc. The context boundaries are
+more well defined, and the whole vertical slice can be moved into a separate deployable, including domain
+models, shared boilerplate, and persisted data moved into it's own database.
+
+> This is akin to a strangler pattern where functionality can be slowly "strangled" out of the
+> monolith, until it becomes non-existent. What's left are the domain-driven microservices.

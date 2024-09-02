@@ -13,7 +13,15 @@ export const loggingLevels = {
   off: 6
 } as const
 
-export const loggingLevelSchema = z.enum(['error', 'warn', 'info', 'verbose', 'debug', 'silly', 'off'])
+export const loggingLevelSchema = z.enum([
+  'error',
+  'warn',
+  'info',
+  'verbose',
+  'debug',
+  'silly',
+  'off'
+])
 export type LoggingLevel = z.infer<typeof loggingLevelSchema>
 
 /**

@@ -1,12 +1,17 @@
 /* c8 ignore start */
 import winston from 'winston'
 
-import { type EnvironmentName, type LoggingLevel, loggingLevelSchema, loggingLevels } from '../config'
+import {
+  type EnvironmentName,
+  type LoggingLevel,
+  loggingLevelSchema,
+  loggingLevels
+} from '../config'
 
 const { format, transports, createLogger } = winston
 
-function getFormats (env: EnvironmentName) {
-  switch(env) {
+function getFormats(env: EnvironmentName) {
+  switch (env) {
     case 'development':
     case 'test':
     case 'preview':
@@ -14,14 +19,13 @@ function getFormats (env: EnvironmentName) {
       return format.combine(
         format.timestamp(),
         format.splat(),
-        format.printf(({ level, message, timestamp }) =>
-          `${timestamp} [${level}]: ${message}`)
+        format.printf(({ level, message, timestamp }) => `${timestamp} [${level}]: ${message}`)
       )
   }
 }
 
-function getTransports (env: EnvironmentName) {
-  switch(env) {
+function getTransports(env: EnvironmentName) {
+  switch (env) {
     case 'development':
     case 'test':
     case 'preview':
@@ -32,7 +36,7 @@ function getTransports (env: EnvironmentName) {
 
 export const createLoggerClient = (
   correlationId: string,
-  config: { mode: EnvironmentName, logging: { level: LoggingLevel }}
+  config: { mode: EnvironmentName; logging: { level: LoggingLevel } }
 ) => {
   const { mode, logging } = config
 

@@ -43,3 +43,4 @@ hyper-nano
 .next
 coverage
 .env.*
+foo.js

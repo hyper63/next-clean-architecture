@@ -11,11 +11,11 @@ if (!MODE) throw new Error('NODE_ENV must be defined')
 /**
  * We extend the clientConfig, so that this configuration
  * requires all configuration for:
- * 
+ *
  * - Our presentation layer (driving side-effect)
  * - Our client implementations (driven side-effects)
  * - Our business domain
- * 
+ *
  * Since this parses configuration as startup time, our application
  * will fail fast, if some required configuration is not provided,
  * which is what we want

@@ -1,5 +1,5 @@
 import z, { ZodSchema } from 'zod'
-import { assoc, compose, identity } from 'ramda'
+import { assoc, pipe, identity } from 'ramda'
 import cuid from 'cuid'
 
 export const typeSchema = z.enum(['user'])
@@ -44,7 +44,7 @@ export const addUpdatedBy = (by: string) => (doc: Record<string, unknown>) =>
 
 const _fromDb: any = identity
 // take an additional schema and further parse the object
-_fromDb.as = <ds extends ZodSchema>(schema: ds) => compose((o) => schema.parse(o), _fromDb)
+_fromDb.as = <ds extends ZodSchema>(schema: ds) => pipe(_fromDb, (o) => schema.parse(o))
 
 export const fromDb: {
   (o: any): typeof o
@@ -55,13 +55,13 @@ export const fromDb: {
  * - set updatedAt to now
  * - parse to ensure doc has all required fields
  */
-const _toDb: any = compose(
+const _toDb: any = pipe(
+  (model) => assoc('updatedAt', new Date(), model),
   // ensure all required fields are present
-  (model) => docSchema.parse(model),
-  (model) => assoc('updatedAt', new Date(), model)
+  (model) => docSchema.parse(model)
 )
 // take an additional schema and further parse the document
-_toDb.as = <ds extends ZodSchema>(ds: ds) => compose((doc) => ds.parse(doc), _toDb)
+_toDb.as = <ds extends ZodSchema>(ds: ds) => pipe(_toDb, (doc) => ds.parse(doc))
 
 export const toDb: {
   (o: any): z.infer<typeof docSchema>
@@ -82,10 +82,10 @@ export const toDb: {
  * @returns - a parsed and validated document ready to send to the database
  */
 export const create = <ds extends ZodSchema>(schema: ds): ((o: any) => z.infer<ds>) =>
-  compose(
-    toDb.as(schema),
+  pipe(
+    (model: Record<string, unknown>) => (model._id ? model : addUnderscoreId(model)),
     (model) => assoc('createdAt', model.createdAt || new Date(), model),
-    (model: Record<string, unknown>) => (model._id ? model : addUnderscoreId(model))
+    toDb.as(schema)
   )
 
 /**
@@ -99,7 +99,7 @@ export const create = <ds extends ZodSchema>(schema: ds): ((o: any) => z.infer<d
  * @returns - a parsed and validated object
  */
 export const get = <ds extends ZodSchema>(schema: ds): ((o: any) => z.infer<ds>) =>
-  compose(fromDb.as(schema))
+  pipe(fromDb.as(schema))
 
 /**
  * Given a document schema, returns a function that
@@ -113,4 +113,4 @@ export const get = <ds extends ZodSchema>(schema: ds): ((o: any) => z.infer<ds>)
  * @returns - a parsed and validated document ready to send to the database
  */
 export const update = <ds extends ZodSchema>(schema: ds): ((o: any) => z.infer<ds>) =>
-  compose(toDb.as(schema))
+  pipe(toDb.as(schema))

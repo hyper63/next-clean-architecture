@@ -6,6 +6,10 @@ import { DomainContext } from '../../types'
 /**
  * Model apis are convenience for calling a dataloader
  * and parsing the result into a model
+ *
+ * A Model api's only concerns are giving/enforcing a specific data structure.
+ *
+ * Nothing else.
  */
 export class User {
   constructor(private context: DomainContext) {}

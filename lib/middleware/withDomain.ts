@@ -57,8 +57,8 @@ export function withDomainSsr(handler: GetServerSideProps) {
     /**
      * Convenience logger at top of req
      */
-    context.req.logger = context.req.domain.clients.logger;
-    
+    context.req.logger = context.req.domain.clients.logger
+
     return handler(context)
   }
 }
@@ -74,7 +74,7 @@ export function withDomainSsr(handler: GetServerSideProps) {
 declare module 'http' {
   interface IncomingMessage {
     config: EnvironmentConfig
-    domain: DomainContext,
+    domain: DomainContext
     logger: DomainContext['clients']['logger']
   }
 }

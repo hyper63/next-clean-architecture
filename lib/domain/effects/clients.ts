@@ -10,7 +10,7 @@ import { domainConfig } from '../config'
  * The client config extends the domainConfig (depends on it),
  * while requiring additional configuration for side-effects
  * like 3rd party api keys.
- * 
+ *
  * In this way, the client can be shaped by the domain configuration
  * without being part of the domain itself (dependencies still go in towards the domain)
  */
